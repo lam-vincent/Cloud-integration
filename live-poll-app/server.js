@@ -5,8 +5,15 @@ const port = 3001;
 // Middleware pour parser le JSON dans les requêtes
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  console.log("Requête reçue sur /");
+  const polls = [
+    { id: 1, question: "Java ou Node.js?", options: ["Java", "Node.js"] }
+  ];
+  res.json(polls);
+});
+
 app.get('/api/polls', (req, res) => {
-  // Pour l'instant, on retourne des données "en dur" (mock data)
   const polls = [
     { id: 1, question: "Quel est votre langage préféré ?", options: ["JavaScript", "Python", "Java"] },
     { id: 2, question: "Tabs ou Spaces ?", options: ["Tabs", "Spaces"] }
