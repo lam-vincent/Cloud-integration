@@ -11,7 +11,7 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3001', // L'adresse de notre serveur backend Express
         changeOrigin: true, // Nécessaire pour les hôtes virtuels
-        secure: false,      // Ne pas rejeter les connexions sur des serveurs http
+        secure: false, // Ne pas rejeter les connexions sur des serveurs http
       },
     },
   },
