@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poll-service-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: poll-service # nom des pods
+  template:
+    metadata:
+      labels:
+        app: poll-service # nom des pods
+    spec:
+      containers:
+      - name: poll-service-container
+        image: mrccniv/poll-service:1.0
+        ports:
+        - containerPort: 3001
