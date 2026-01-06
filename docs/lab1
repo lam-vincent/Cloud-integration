@@ -1,0 +1,324 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. Tous droits réservés.
+
+Installez la dernière version de PowerShell pour de nouvelles fonctionnalités et améliorations ! https://aka.ms/PSWindows
+
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent> cd C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent> minikube start
+
+- minikube v1.37.0 sur Microsoft Windows 11 Pro 10.0.26100.7171 Build 26100.7171
+- Choix automatique du pilote docker. Autres choix: virtualbox, ssh
+- Utilisation du pilote Docker Desktop avec le privilège root
+- Démarrage du nœud "minikube" primary control-plane dans le cluster "minikube"
+- Extraction de l'image de base v0.0.48...
+- Téléchargement du préchargement de Kubernetes v1.34.0...
+  > preloaded-images-k8s-v18-v1...: 337.07 MiB / 337.07 MiB 100.00% 8.79 Mi
+  > gcr.io/k8s-minikube/kicbase...: 488.52 MiB / 488.52 MiB 100.00% 12.25 M
+- Création de docker container (CPU=2, Memory=8100Mo) ...
+  ! Échec de la connexion à https://registry.k8s.io/ depuis l'intérieur du minikube container
+- Pour extraire de nouvelles images externes, vous devrez peut-être configurer un proxy : https://minikube.sigs.k8s.io/docs/reference/networking/proxy/
+- Préparation de Kubernetes v1.34.0 sur Docker 28.4.0...
+- Configuration de bridge CNI (Container Networking Interface)...
+- Vérification des composants Kubernetes...
+  - Utilisation de l'image gcr.io/k8s-minikube/storage-provisioner:v5
+- Modules activés: storage-provisioner, default-storageclass
+- Terminé ! kubectl est maintenant configuré pour utiliser "minikube" cluster et espace de noms "default" par défaut.
+  PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent> cd .\MyService\
+  PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> ./gradlew build
+
+Welcome to Gradle 8.4!
+
+Here are the highlights of this release:
+
+- Compiling and testing with Java 21
+- Faster Java compilation on Windows
+- Role focused dependency configurations creation
+
+For more details see https://docs.gradle.org/8.4/release-notes.html
+
+Starting a Gradle Daemon, 2 incompatible and 2 stopped Daemons could not be reused, use --status for details
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.4/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 16s
+7 actionable tasks: 7 executed
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> docker build -t myservice .
+[+] Building 15.0s (8/8) FINISHED docker:desktop-linux
+=> [internal] load build definition from Dockerfile 0.1s
+=> => transferring dockerfile: 234B 0.0s
+=> [internal] load metadata for docker.io/library/eclipse-temurin:21-jdk-jammy 1.4s
+=> [auth] library/eclipse-temurin:pull token for registry-1.docker.io 0.0s
+=> [internal] load .dockerignore 0.1s
+=> => transferring context: 2B 0.0s
+=> [internal] load build context 0.7s
+=> => transferring context: 19.63MB 0.6s
+=> [1/2] FROM docker.io/library/eclipse-temurin:21-jdk-jammy@sha256:81ad1240d91eeafe1ab4154e9ed2310b67cb966caad1d235232ae10abcb1f 11.7s
+=> => resolve docker.io/library/eclipse-temurin:21-jdk-jammy@sha256:81ad1240d91eeafe1ab4154e9ed2310b67cb966caad1d235232ae10abcb1fa 0.1s
+=> => sha256:02d80376fd82870628b01ae6f01bd27552bc9aa3a4cd5be88515f79fe298a87a 2.28kB / 2.28kB 0.3s
+=> => sha256:462f51c3d063559e2c0d0a8f88d051dff78b56bec8c4f6769d9947a96f87f917 159B / 159B 0.4s
+=> => sha256:0974368270e4f573ff1edaae07b59b84ccaff6997873cccde92a19c7ec978851 157.84MB / 157.84MB 9.9s
+=> => sha256:01facf544478e1a2955676ca1741ac59c36b2e80ddaa739f43812a4585b704e7 20.70MB / 20.70MB 4.1s
+=> => sha256:7e49dc6156b0b532730614d83a65ae5e7ce61e966b0498703d333b4d03505e4f 29.54MB / 29.54MB 2.9s
+=> => extracting sha256:7e49dc6156b0b532730614d83a65ae5e7ce61e966b0498703d333b4d03505e4f 1.1s
+=> => extracting sha256:01facf544478e1a2955676ca1741ac59c36b2e80ddaa739f43812a4585b704e7 0.9s
+=> => extracting sha256:0974368270e4f573ff1edaae07b59b84ccaff6997873cccde92a19c7ec978851 1.4s
+=> => extracting sha256:462f51c3d063559e2c0d0a8f88d051dff78b56bec8c4f6769d9947a96f87f917 0.0s
+=> => extracting sha256:02d80376fd82870628b01ae6f01bd27552bc9aa3a4cd5be88515f79fe298a87a 0.0s
+=> [2/2] ADD ./build/libs/myservice-0.0.1-SNAPSHOT.jar app.jar 0.3s
+=> exporting to image 1.2s
+=> => exporting layers 0.9s
+=> => exporting manifest sha256:707967bafda5b16c58c71697521acd32ac0d09059c9166d9200f270c1f95e01e 0.0s
+=> => exporting config sha256:3c03475ff3a8dbff0fffb2e18f3230c0c47d567691bd68283f1120d5004607be 0.0s
+=> => exporting attestation manifest sha256:25b02c972175ac96bdcc39739fc00e0e03e6a355f715f9f5aefc5f9c7936a5ba 0.1s
+=> => exporting manifest list sha256:98c2bfa2257a2c538b7a600f2e952a2fc2970756f8c2ca465b214a76c8fd0cee 0.0s
+=> => naming to docker.io/library/myservice:latest 0.0s
+=> => unpacking to docker.io/library/myservice:latest 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/wv5y5m2r19o2ax8wd6dr6aqd6
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> docker images
+REPOSITORY TAG IMAGE ID CREATED SIZE
+myservice latest 98c2bfa2257a 36 seconds ago 706MB
+gcr.io/k8s-minikube/kicbase <none> 7171c97a5162 2 months ago 1.84GB
+gcr.io/k8s-minikube/kicbase v0.0.48 41454ef774d0 2 months ago 1.84GB
+meilisearch-angular-spring-example-backend latest 029b4db1b24d 3 months ago 1.12GB
+car-game-frontend latest 1bacb952eb6d 3 months ago 74.3MB
+meilisearch-angular-spring-example-frontend latest 9b359e776e75 3 months ago 74.3MB
+car-game-backend latest f54a930d4a65 3 months ago 1.12GB
+minio/minio latest d249d1fb6966 3 months ago 240MB
+postgres 16 918e8e72b35b 5 months ago 617MB
+lamvincent/auth-service latest 75899a3e5918 6 months ago 817MB
+auth-service latest 75899a3e5918 6 months ago 817MB
+auth-service-app latest 995f5f4c4722 6 months ago 817MB
+auth-service-auth-service latest fd4b5745d906 6 months ago 817MB
+lamvincent/my-docker-webapp latest 024d09163b33 6 months ago 73.6MB
+my-docker-webapp latest 024d09163b33 6 months ago 73.6MB
+redis alpine 0779069b3c24 6 months ago 87MB
+nginx alpine 65645c7bb6a0 7 months ago 73.6MB
+postgres latest fe3f571d128e 8 months ago 621MB
+alpine latest a8560b36e8b8 9 months ago 12.1MB
+busybox latest f85340bf132a 13 months ago 6.55MB
+getmeili/meilisearch v1.7 010341a778fe 19 months ago 245MB
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> docker run -p 4000:8080 -t myservice
+
+. \_**\_ \_ ** \_ \_
+/\\ / **_'_ ** \_ _(_)_ \_\_ \_\_ _ \ \ \ \
+( ( )\_** | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/ \_**)| |_)| | | | | || (_| | ) ) ) )
+' |\_**\_| .**|_| |_|_| |_\__, | / / / /
+=========|_|==============|_\_\_/=/_/_/_/
+:: Spring Boot :: (v3.2.0)
+
+2025-11-18T13:51:49.476Z INFO 1 --- [ main] c.e.myservice.MyServiceApplication : Starting MyServiceApplication v0.0.1-SNAPSHOT using Java 21.0.9 with PID 1 (/app.jar started by root in /)
+2025-11-18T13:51:49.478Z INFO 1 --- [ main] c.e.myservice.MyServiceApplication : No active profile set, falling back to 1 default profile: "default"
+2025-11-18T13:51:50.336Z INFO 1 --- [ main] o.s.b.w.embedded.tomcat.TomcatWebServer : Tomcat initialized with port 8080 (http)
+2025-11-18T13:51:50.345Z INFO 1 --- [ main] o.apache.catalina.core.StandardService : Starting service [Tomcat]
+2025-11-18T13:51:50.345Z INFO 1 --- [ main] o.apache.catalina.core.StandardEngine : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-11-18T13:51:50.377Z INFO 1 --- [ main] o.a.c.c.C.[Tomcat].[localhost].[/] : Initializing Spring embedded WebApplicationContext
+2025-11-18T13:51:50.378Z INFO 1 --- [ main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 820 ms
+2025-11-18T13:51:50.647Z INFO 1 --- [ main] o.s.b.w.embedded.tomcat.TomcatWebServer : Tomcat started on port 8080 (http) with context path ''
+2025-11-18T13:51:50.658Z INFO 1 --- [ main] c.e.myservice.MyServiceApplication : Started MyServiceApplication in 1.553 seconds (process running for 2.0)
+
+got 3 SIGTERM/SIGINTs, forcefully exiting
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> ^C
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> docker run -d -p 4000:8080 -t myservice
+c405ee53c2605b680bf58ffe222eb5f66268d716752d752d728b8921c03440e6
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> docker ps
+CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
+c405ee53c260 myservice "java -Djava.securit…" 9 seconds ago Up 9 seconds 0.0.0.0:4000->8080/tcp hopeful_cannon
+aa9eeb027103 gcr.io/k8s-minikube/kicbase:v0.0.48 "/usr/local/bin/entr…" 2 minutes ago Up 2 minutes 127.0.0.1:54318->22/tcp, 127.0.0.1:54319->2376/tcp, 127.0.0.1:54321->5000/tcp, 127.0.0.1:54322->8443/tcp, 127.0.0.1:54320->32443/tcp minikube
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> docker images
+REPOSITORY TAG IMAGE ID CREATED SIZE
+myservice latest 98c2bfa2257a About a minute ago 706MB
+gcr.io/k8s-minikube/kicbase <none> 7171c97a5162 2 months ago 1.84GB
+gcr.io/k8s-minikube/kicbase v0.0.48 41454ef774d0 2 months ago 1.84GB
+meilisearch-angular-spring-example-backend latest 029b4db1b24d 3 months ago 1.12GB
+car-game-frontend latest 1bacb952eb6d 3 months ago 74.3MB
+meilisearch-angular-spring-example-frontend latest 9b359e776e75 3 months ago 74.3MB
+car-game-backend latest f54a930d4a65 3 months ago 1.12GB
+minio/minio latest d249d1fb6966 3 months ago 240MB
+postgres 16 918e8e72b35b 5 months ago 617MB
+lamvincent/auth-service latest 75899a3e5918 6 months ago 817MB
+auth-service latest 75899a3e5918 6 months ago 817MB
+auth-service-app latest 995f5f4c4722 6 months ago 817MB
+auth-service-auth-service latest fd4b5745d906 6 months ago 817MB
+my-docker-webapp latest 024d09163b33 6 months ago 73.6MB
+lamvincent/my-docker-webapp latest 024d09163b33 6 months ago 73.6MB
+redis alpine 0779069b3c24 6 months ago 87MB
+nginx alpine 65645c7bb6a0 7 months ago 73.6MB
+postgres latest fe3f571d128e 8 months ago 621MB
+alpine latest a8560b36e8b8 9 months ago 12.1MB
+busybox latest f85340bf132a 13 months ago 6.55MB
+getmeili/meilisearch v1.7 010341a778fe 19 months ago 245MB
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> docker tag myservice:latest mrccniv/myservice:1
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> docker login
+Authenticating with existing credentials... [Username: lamvincent]
+
+i Info → To login with a different account, run 'docker logout' followed by 'docker login'
+
+Login Succeeded
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl get nodes
+NAME STATUS ROLES AGE VERSION
+minikube Ready control-plane 3m14s v1.34.0
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl create deployment myservice --image=mrccniv/myservice:1
+
+deployment.apps/myservice created
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl get pods
+NAME READY STATUS RESTARTS AGE
+myservice-79b5767bb7-djbsn 0/1 ContainerCreating 0 6s
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl describe pods
+Name: myservice-79b5767bb7-djbsn
+Namespace: default
+Priority: 0
+Service Account: default
+Node: minikube/192.168.49.2
+Start Time: Tue, 18 Nov 2025 14:53:30 +0100
+Labels: app=myservice
+pod-template-hash=79b5767bb7
+Annotations: <none>
+Status: Pending
+IP:
+IPs: <none>
+Controlled By: ReplicaSet/myservice-79b5767bb7
+Containers:
+myservice:
+Container ID:
+Image: mrccniv/myservice:1
+Image ID:
+Port: <none>
+Host Port: <none>
+State: Waiting
+Reason: ContainerCreating
+Ready: False
+Restart Count: 0
+Environment: <none>
+Mounts:
+/var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-gklgm (ro)
+Conditions:
+Type Status
+PodReadyToStartContainers False
+Initialized True
+Ready False
+ContainersReady False
+PodScheduled True
+Volumes:
+kube-api-access-gklgm:
+Type: Projected (a volume that contains injected data from multiple sources)
+TokenExpirationSeconds: 3607
+ConfigMapName: kube-root-ca.crt
+Optional: false
+DownwardAPI: true
+QoS Class: BestEffort
+Node-Selectors: <none>
+Tolerations: node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+Type Reason Age From Message
+
+---
+
+Normal Scheduled 10s default-scheduler Successfully assigned default/myservice-79b5767bb7-djbsn to minikube
+Normal Pulling 9s kubelet Pulling image "mrccniv/myservice:1"
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl exec -it myservice -- /bin/bash
+Error from server (NotFound): pods "myservice" not found
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl exec -it myservice -- /bin/bash^C
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl get pods
+NAME READY STATUS RESTARTS AGE
+myservice-79b5767bb7-djbsn 1/1 Running 0 55s
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl exec -it myservice -- /bin/bash
+Error from server (NotFound): pods "myservice" not found
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl exec -it myservice -- /bin/bashmyservice-79b5767bb7-djbsn -- /bin/bash
+Error from server (NotFound): pods "myservice" not found
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl exec -it myservice-79b5767bb7-djbsn -- /bin/bash
+root@myservice-79b5767bb7-djbsn:/# ls
+app.jar boot dev home lib32 libx32 mnt proc run srv tmp var
+bin **cacert_entrypoint.sh etc lib lib64 media opt root sbin sys usr
+root@myservice-79b5767bb7-djbsn:/# cd app.jar
+bash: cd: app.jar: Not a directory
+root@myservice-79b5767bb7-djbsn:/# ls
+app.jar boot dev home lib32 libx32 mnt proc run srv tmp var
+bin **cacert_entrypoint.sh etc lib lib64 media opt root sbin sys usr
+root@myservice-79b5767bb7-djbsn:/# cd dev/
+root@myservice-79b5767bb7-djbsn:/dev# ls
+core fd full mqueue null ptmx pts random shm stderr stdin stdout termination-log tty urandom zero
+root@myservice-79b5767bb7-djbsn:/dev# cd ..
+root@myservice-79b5767bb7-djbsn:/# cd mnt/
+root@myservice-79b5767bb7-djbsn:/mnt# ls
+root@myservice-79b5767bb7-djbsn:/mnt# cd ..
+root@myservice-79b5767bb7-djbsn:/# ls
+app.jar boot dev home lib32 libx32 mnt proc run srv tmp var
+bin \_\_cacert_entrypoint.sh etc lib lib64 media opt root sbin sys usr
+root@myservice-79b5767bb7-djbsn:/# exit
+exit
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl expose deployment myservice --type=NodePort --port=8080
+
+service/myservice exposed
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> minikube service myservice --url
+http://127.0.0.1:60172
+! Comme vous utilisez un pilote Docker sur windows, le terminal doit être ouvert pour l'exécuter.
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> ^C
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> ^C
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl get deployments
+NAME READY UP-TO-DATE AVAILABLE AGE
+myservice 1/1 1 1 2m27s
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl get pods
+NAME READY STATUS RESTARTS AGE
+myservice-79b5767bb7-djbsn 1/1 Running 0 2m31s
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl scale --replicas=2 deployment/myservice
+deployment.apps/myservice scaled
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl get deployments
+NAME READY UP-TO-DATE AVAILABLE AGE
+myservice 2/2 2 2 2m39s
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl get pods
+NAME READY STATUS RESTARTS AGE
+myservice-79b5767bb7-djbsn 1/1 Running 0 2m42s
+myservice-79b5767bb7-pfvfk 1/1 Running 0 7s
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl get deployments
+NAME READY UP-TO-DATE AVAILABLE AGE
+myservice 2/2 2 2 2m50s
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl get services
+NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
+kubernetes ClusterIP 10.96.0.1 <none> 443/TCP 6m18s
+myservice NodePort 10.98.173.31 <none> 8080:31088/TCP 46s
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl delete service serviceName
+Error from server (NotFound): services "serviceName" not found
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl delete service myservice
+service "myservice" deleted
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl expose deployment myservice --type=LoadBalancer --port=8080
+service/myservice exposed
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> minikube service myservice --url
+http://127.0.0.1:54101
+! Comme vous utilisez un pilote Docker sur windows, le terminal doit être ouvert pour l'exécuter.
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> ^C
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> ^C
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> kubectl apply -f myservice-deployment.yml
+error: the path "myservice-deployment.yml" does not exist
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent\MyService> cd ..
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent> kubectl apply -f myservice-deployment.yml
+Warning: resource deployments/myservice is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
+deployment.apps/myservice configured
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent> ls
+
+    Répertoire : C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent
+
+Mode LastWriteTime Length Name
+
+---
+
+d----- 18/11/2025 14:41 MyService
+-a---- 18/11/2025 14:39 301 .gitignore
+-a---- 18/11/2025 14:39 414 ingress.yml
+-a---- 18/11/2025 14:39 374 myservice-deployment.yml
+-a---- 18/11/2025 14:39 248 myservice-loadbalancing-service.yml
+-a---- 18/11/2025 14:39 217 myservice-service.yml
+-a---- 18/11/2025 14:39 9132 README.md
+
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent> kubectl apply -f myservice-service.yml
+Warning: resource services/myservice is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
+service/myservice configured
+PS C:\Users\lamvi\Documents\Projets\kubernetes-minikube-vincent> kubectl apply -f myservice-loadbalancing-service.yml
+service/myservice configured
