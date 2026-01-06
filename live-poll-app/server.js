@@ -1,0 +1,20 @@
+const express = require('express');
+const app = express();
+const port = 3001;
+
+// Middleware pour parser le JSON dans les requêtes
+app.use(express.json());
+
+app.get('/api/polls', (req, res) => {
+  // Pour l'instant, on retourne des données "en dur" (mock data)
+  const polls = [
+    { id: 1, question: "Quel est votre langage préféré ?", options: ["JavaScript", "Python", "Java"] },
+    { id: 2, question: "Tabs ou Spaces ?", options: ["Tabs", "Spaces"] }
+  ];
+  
+  res.json(polls);
+});
+
+app.listen(port, () => {
+  console.log(`🚀 Serveur backend démarré sur http://localhost:${port}`);
+});
