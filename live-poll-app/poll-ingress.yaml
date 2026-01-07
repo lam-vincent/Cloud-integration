@@ -4,7 +4,8 @@ metadata:
   name: poll-ingress
 spec:
   rules:
-  - http:
+  - host: poll.test
+    http:
       paths:
       - path: /api/polls
         pathType: Prefix
