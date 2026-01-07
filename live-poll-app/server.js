@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const port = 3001;
 
-// Middleware pour parser le JSON dans les requêtes
 app.use(express.json());
 
 app.get('/api/polls', (req, res) => {
