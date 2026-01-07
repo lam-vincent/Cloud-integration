@@ -6,14 +6,14 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: poll-service # nom des pods
+      app: poll-service
   template:
     metadata:
       labels:
-        app: poll-service # nom des pods
+        app: poll-service
     spec:
       containers:
       - name: poll-service-container
-        image: mrccniv/poll-service:1.1
+        image: mrccniv/poll-service:1.2
         ports:
         - containerPort: 3001
