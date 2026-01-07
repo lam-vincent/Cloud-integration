@@ -14,3 +14,10 @@ spec:
             name: poll-service
             port:
               number: 80
+      - path: /api/vote
+        pathType: Prefix
+        backend:
+          service:
+            name: vote-service
+            port:
+              number: 80
