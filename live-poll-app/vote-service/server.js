@@ -1,9 +1,18 @@
 const express = require('express');
 const axios = require('axios');
+const { Pool } = require('pg');
 const app = express();
 const port = 3001;
 
 app.use(express.json());
+
+const pool = new Pool({
+  user: process.env.PGUSER,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+  port: process.env.PGPORT,
+});
 
 const POLL_SERVICE_URL = 'http://poll-service/api/polls';
 
@@ -14,24 +23,23 @@ app.post('/api/vote', async (req, res) => {
   }
 
   try {
-    console.log(`Vérification de l'existence du sondage ${pollId} auprès de poll-service...`);
+    console.log(`Vérification du sondage ${pollId} auprès de poll-service...`);
     const response = await axios.get(`${POLL_SERVICE_URL}/${pollId}`);
     const poll = response.data;
     
     if (!poll.options.includes(option)) {
-        console.log(`Option "${option}" non valide pour le sondage ${pollId}`);
-        return res.status(400).send({ error: `L'option "${option}" n'est pas valide pour ce sondage.` });
+        return res.status(400).send({ error: `Option non valide.` });
     }
     
-    console.log(`Vote reçu pour le sondage ${pollId} ("${poll.question}") sur l'option "${option}"`);
-    res.status(200).send({ message: 'Vote enregistré avec succès !' });
+    // Insérer le vote dans la base de données
+    await pool.query('INSERT INTO votes (poll_id, selected_option) VALUES ($1, $2)', [pollId, option]);
+    console.log(`Vote enregistré en BDD pour le sondage ${pollId}`);
+    res.status(201).send({ message: 'Vote enregistré avec succès !' });
 
   } catch (error) {
-    console.error("Erreur lors de la communication avec poll-service:", error.message);
-    res.status(404).send({ error: "Le sondage spécifié n'existe pas." });
+    console.error("Erreur:", error.message);
+    res.status(404).send({ error: 'Le sondage spécifié n\'existe pas.' });
   }
 });
 
-app.listen(port, () => {
-  console.log(`🚀 Vote-service démarré sur le port ${port}`);
-});
+app.listen(port, () => console.log(`🚀 Vote-service (avec DB) démarré sur le port ${port}`));
