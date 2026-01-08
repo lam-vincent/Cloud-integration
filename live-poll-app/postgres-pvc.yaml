@@ -1,3 +1,5 @@
+# doesn't use anymore, kept for reference, 
+# replaced by volumeClaimTemplates in postgres-deployment.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
