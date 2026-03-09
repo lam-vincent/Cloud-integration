@@ -58,4 +58,18 @@ app.post('/api/polls', async (req, res) => {
   }
 });
 
+// Endpoint to get all votes for a poll
+app.get('/api/polls/:id/votes', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT username, selected_option, voted_at FROM votes WHERE poll_id = $1 ORDER BY voted_at ASC',
+      [req.params.id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Erreur serveur');
+  }
+});
+
 app.listen(port, () => console.log(`🚀 Poll-service (avec DB) démarré sur le port ${port}`));
