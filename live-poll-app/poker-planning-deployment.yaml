@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: poker-planning
-        image: europe-west1-docker.pkg.dev/poker-planning/poker-repo/poker-planning:latest
+        image: europe-west1-docker.pkg.dev/poker-planning-489721/poker-repo/poker-planning:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
