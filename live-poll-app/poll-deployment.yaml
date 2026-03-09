@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: poll-service-container
-        image: mrccniv/poll-service:1.3
+        image: poll-service:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 3001
         env:
