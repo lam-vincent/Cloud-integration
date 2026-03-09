@@ -4,7 +4,7 @@ metadata:
   name: poll-ingress
 spec:
   rules:
-  - host: poll.test
+  - host: poker.vincentlam.xyz
     http:
       paths:
       - path: /api/polls
