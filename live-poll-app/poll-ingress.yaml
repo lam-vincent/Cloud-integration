@@ -2,7 +2,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: poll-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
+  ingressClassName: gce
+  tls:
+  - hosts:
+    - poker.vincentlam.xyz
+    secretName: poker-tls
   rules:
   - host: poker.vincentlam.xyz
     http:
