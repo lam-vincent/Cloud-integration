@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poker-planning
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: poker-planning
+  template:
+    metadata:
+      labels:
+        app: poker-planning
+    spec:
+      containers:
+      - name: poker-planning
+        image: mrccniv/poker-planning:1
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: poker-planning-service
+spec:
+  selector:
+    app: poker-planning
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
