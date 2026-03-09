@@ -17,23 +17,28 @@ const pool = new Pool({
 const POLL_SERVICE_URL = 'http://poll-service/api/polls';
 
 app.post('/api/vote', async (req, res) => {
-  const { pollId, option } = req.body;
-  if (!pollId || !option) {
-    return res.status(400).send({ error: 'pollId et option sont requis.' });
+  const { pollId, option, username } = req.body;
+  if (!pollId || !option || !username) {
+    return res.status(400).send({ error: 'pollId, option et username sont requis.' });
   }
 
   try {
     console.log(`Vérification du sondage ${pollId} auprès de poll-service...`);
     const response = await axios.get(`${POLL_SERVICE_URL}/${pollId}`);
     const poll = response.data;
-    
+
     if (!poll.options.includes(option)) {
         return res.status(400).send({ error: `Option non valide.` });
     }
-    
-    // Insérer le vote dans la base de données
-    await pool.query('INSERT INTO votes (poll_id, selected_option) VALUES ($1, $2)', [pollId, option]);
-    console.log(`Vote enregistré en BDD pour le sondage ${pollId}`);
+
+    // Upsert: insert or update if same user votes again
+    await pool.query(
+      `INSERT INTO votes (poll_id, selected_option, username)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (poll_id, username) DO UPDATE SET selected_option = EXCLUDED.selected_option, voted_at = NOW()`,
+      [pollId, option, username]
+    );
+    console.log(`Vote enregistré en BDD pour le sondage ${pollId} par ${username}`);
     res.status(201).send({ message: 'Vote enregistré avec succès !' });
 
   } catch (error) {
