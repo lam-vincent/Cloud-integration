@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: poll-ingress
+spec:
+  rules:
+  - host: poll.test
+    http:
+      paths:
+      - path: /api/polls
+        pathType: Prefix
+        backend:
+          service:
+            name: poll-service
+            port:
+              number: 80
+      - path: /api/vote
+        pathType: Prefix
+        backend:
+          service:
+            name: vote-service
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: poker-planning-service
+            port:
+              number: 80

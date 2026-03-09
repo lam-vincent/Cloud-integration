@@ -1,0 +1,12 @@
+# doesn't use anymore, kept for reference, 
+# replaced by volumeClaimTemplates in postgres-deployment.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
