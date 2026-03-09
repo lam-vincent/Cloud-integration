@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: poker-planning
-        image: poker-planning:latest
-        imagePullPolicy: Never
+        image: REDACTED_REGISTRY_HOST/poker-planning/poker-repo/poker-planning:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
 ---
