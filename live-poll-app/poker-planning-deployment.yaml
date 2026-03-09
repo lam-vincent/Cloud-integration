@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: poker-planning
-        image: mrccniv/poker-planning:1
+        image: poker-planning:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 80
 ---
