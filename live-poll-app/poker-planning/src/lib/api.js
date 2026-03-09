@@ -47,6 +47,7 @@ export const api = {
       body: JSON.stringify({
         pollId: voteData.pollId,
         option: voteData.voteValue,
+        username: voteData.username,
       }),
     });
     if (!res.ok) throw new Error("Failed to submit vote");
@@ -54,5 +55,11 @@ export const api = {
       description: "Your estimate has been sent to the server.",
     });
     return { status: "success" };
+  },
+
+  getVotes: async (pollId) => {
+    const res = await fetch(`${BASE_URL}/api/polls/${pollId}/votes`);
+    if (!res.ok) throw new Error("Failed to fetch votes");
+    return res.json();
   },
 };
