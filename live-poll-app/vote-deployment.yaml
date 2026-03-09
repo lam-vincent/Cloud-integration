@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: vote-service-container
-        image: europe-west1-docker.pkg.dev/poker-planning/poker-repo/vote-service:latest
+        image: europe-west1-docker.pkg.dev/poker-planning-489721/poker-repo/vote-service:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3001
