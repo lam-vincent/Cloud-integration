@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: poll-service-container
-        image: REDACTED_REGISTRY_HOST/poker-planning/poker-repo/poll-service:latest
+        image: REDACTED_REGISTRY_HOST/REDACTED_GCP_PROJECT_ID/poker-repo/poll-service:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3001
