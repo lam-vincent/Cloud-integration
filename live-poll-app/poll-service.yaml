@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: poll-service # Le nom DNS du service à l'intérieur du cluster
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   type: ClusterIP # Accessible seulement depuis l'intérieur du cluster
   selector:
