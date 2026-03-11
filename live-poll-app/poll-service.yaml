@@ -4,6 +4,7 @@ metadata:
   name: poll-service # Le nom DNS du service à l'intérieur du cluster
   annotations:
     cloud.google.com/neg: '{"ingress": true}'
+    cloud.google.com/backend-config: '{"default": "api-backend-config"}'
 spec:
   type: ClusterIP # Accessible seulement depuis l'intérieur du cluster
   selector:
