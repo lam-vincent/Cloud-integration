@@ -72,4 +72,8 @@ app.get('/api/polls/:id/votes', async (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+  res.status(200).send('ok');
+});
+
 app.listen(port, () => console.log(`🚀 Poll-service (avec DB) démarré sur le port ${port}`));

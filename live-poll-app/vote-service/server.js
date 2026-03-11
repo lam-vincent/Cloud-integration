@@ -47,4 +47,8 @@ app.post('/api/vote', async (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+  res.status(200).send('ok');
+});
+
 app.listen(port, () => console.log(`🚀 Vote-service (avec DB) démarré sur le port ${port}`));
