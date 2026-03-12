@@ -4,6 +4,7 @@ A collaborative planning poker web application for agile teams, deployed on GKE 
 
 ## Demo
 
+If the links do not work, the videos can also be found in the docs/ folder.
 
 
 https://github.com/user-attachments/assets/405c8fc1-0981-4552-b02b-6242170320b7
