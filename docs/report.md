@@ -271,11 +271,6 @@ spec:
       secretName: poker-tls
 ```
 
-**Problème rencontré : GKE Backends UNHEALTHY**
-Les backends GKE nécessitent une health check HTTP sur `/`. Ajout d'une route `GET /` retournant 200 dans chaque service, et configuration des `readinessProbe` / `livenessProbe` dans les Deployments.
-
-Voir aussi : `docs/GKE Backends UNHEALTHY + Image Not Updating After Redeploy/`
-
 ---
 
 ### Phase 6 (Bonus) - SSE remplaçant le polling HTTP (20/20)
@@ -324,8 +319,8 @@ Voir aussi : `docs/GKE Backends UNHEALTHY + Image Not Updating After Redeploy/`
 ```json
 {
   "pollId": 1,
-  "option": "Kubernetes",
-  "username": "alice"
+  "option": "8",
+  "username": "mélissa"
 }
 ```
 
@@ -436,11 +431,9 @@ docker push REGION-docker.pkg.dev/PROJECT_ID/REPO/vote-service:latest
      --from-literal=api-token=<token>
    ```
 
-Voir : `docs/Cloudflare + GCP Ingress SSL Setup/`
-
 ---
 
-## 10. Problèmes connus et Dépannage
+## 10. Problèmes rencontrés et Dépannage
 
 ### GKE Backends UNHEALTHY
 
@@ -452,9 +445,7 @@ Voir : `docs/Cloudflare + GCP Ingress SSL Setup/`
 
 - Ajouter `GET /` retournant 200 dans chaque service
 - Configurer `readinessProbe` et `livenessProbe` dans les Deployments
-- Utiliser `BackendConfig` pour personnaliser les health checks si nécessaire
-
-Voir : `docs/GKE Backends UNHEALTHY + Image Not Updating After Redeploy/`
+- Utiliser `BackendConfig` pour personnaliser les health checks
 
 ### Image non mise à jour après redéploiement
 
@@ -463,25 +454,6 @@ Voir : `docs/GKE Backends UNHEALTHY + Image Not Updating After Redeploy/`
 **Cause** : `imagePullPolicy` par défaut est `IfNotPresent` pour les tags non-latest.
 
 **Solution** : Utiliser `imagePullPolicy: Always` dans le Deployment.
-
-### Certificat TLS - challenge DNS-01
-
-**Symptôme** : Le `Certificate` reste en état `False` / `Pending`.
-
-**Causes possibles** :
-
-- Token API Cloudflare invalide ou sans permission DNS:Edit
-- Enregistrement DNS pas encore propagé
-- Mauvaise configuration du `ClusterIssuer`
-
-**Vérification** :
-
-```bash
-kubectl describe certificate poker-tls
-kubectl describe certificaterequest
-kubectl describe order
-kubectl describe challenge
-```
 
 ---
 
@@ -501,11 +473,3 @@ Reminder: to do
 - **TLS / cert-manager** : automatisation des certificats Let's Encrypt avec challenge DNS-01
 - **Architecture microservices** : communication inter-services, validation distribuée
 - **PostgreSQL sur K8s** : persistance avec StatefulSet et volumeClaimTemplates
-
-### Améliorations envisagées
-
-- CI/CD avec GitHub Actions (build + push automatique au merge)
-- Infrastructure as Code avec Terraform (provisioning du cluster GKE)
-- Monitoring avec Prometheus + Grafana
-- Tests d'intégration automatisés
-- Mise en place d'un namespace dédié et de NetworkPolicies pour isoler les services
