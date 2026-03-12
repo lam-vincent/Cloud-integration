@@ -17,6 +17,10 @@ script:
 
 # Rapport de Projet - Intégration Cloud
 
+**Application déployée** : https://poker.vincentlam.xyz/
+
+**README** : https://github.com/lam-vincent/kubernetes-minikube-vincent#readme
+
 **Dépôt GitHub** : https://github.com/lam-vincent/kubernetes-minikube-vincent
 
 ---
