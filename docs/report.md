@@ -19,9 +19,9 @@ script:
 
 **Application déployée** : https://poker.vincentlam.xyz/
 
-**README** : https://github.com/lam-vincent/kubernetes-minikube-vincent#readme
+**README** : https://github.com/lam-vincent/Cloud-integration#readme
 
-**Dépôt GitHub** : https://github.com/lam-vincent/kubernetes-minikube-vincent
+**Dépôt GitHub** : https://github.com/lam-vincent/Cloud-integration
 
 ---
 
