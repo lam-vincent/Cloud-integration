@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button"
 
-export default function PokerCard({ value, isSelected, onSelect }) {
+export default function PokerCard({ value, isSelected, onSelect, disabled }) {
   return (
     <Button
+      disabled={disabled}
       variant={isSelected ? "default" : "outline"}
       className={`h-24 w-16 text-xl font-bold transition-all ${
         isSelected ? "scale-110 shadow-lg" : "hover:bg-slate-100"
