@@ -15,7 +15,7 @@ spec:
       containers:
       - name: poker-planning
         image: REDACTED_REGISTRY_HOST/REDACTED_GCP_PROJECT_ID/poker-repo/poker-planning:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         readinessProbe:
