@@ -1,3 +1,20 @@
+---
+pdf_options:
+  format: A4
+  margin: 30mm 20mm
+script:
+  - url: https://unpkg.com/mermaid@9/dist/mermaid.min.js
+  - content: |
+      document.querySelectorAll('code.language-mermaid').forEach(el => {
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = el.textContent;
+        el.parentNode.replaceWith(div);
+      });
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'loose' });
+      mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+---
+
 # Rapport de Projet - Intégration Cloud
 
 **Dépôt GitHub** : https://github.com/lam-vincent/kubernetes-minikube-vincent
@@ -22,6 +39,18 @@ L'application est structurée en microservices et déployée sur Kubernetes, d'a
 | -------------- | ------------------------------------------------------------ |
 | Vincent Lam    | Développement, déploiement K8s, configuration GCP/Cloudflare |
 | Mélissa Lacheb | Développement, déploiement K8s                               |
+
+---
+
+## Démonstrations
+
+Les vidéos de démonstration sont disponibles dans le dossier `docs/` du dépôt, et également accessibles directement depuis le [README.md](../README.md#demo) (lecteur intégré).
+
+| Vidéo                                                                                | Description                                    |
+| ------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| `docs/create-new-session.mp4`                                                        | Création d'une session de planning poker       |
+| `docs/change-name.mp4`                                                               | Changement de nom d'un participant             |
+| `docs/replace-http-polling-with-server-sent-events-sse-postgresql-listen-notify.mp4` | Remplacement du polling HTTP par SSE (Phase 6) |
 
 ---
 
@@ -273,7 +302,7 @@ spec:
 - Utilisation de PostgreSQL LISTEN/NOTIFY pour pousser les mises à jour depuis la base de données
 - Remplacement du `setInterval` côté React par un `EventSource`
 
-**Démonstration** : `docs/replace-http-polling-with-server-sent-events-sse-postgresql-listen-notify.mp4`
+**Démonstration** : voir section [Démonstrations](#démonstrations) — `docs/replace-http-polling-with-server-sent-events-sse-postgresql-listen-notify.mp4`
 
 ---
 
@@ -451,9 +480,7 @@ docker push REGION-docker.pkg.dev/PROJECT_ID/REPO/vote-service:latest
 
 If the links fail to work, the screenshots can also be found in the docs/ folder.
 
-<img width="1704" height="1351" alt="Vincent LAM Google Labs Profile Activity" src="https://github.com/user-attachments/assets/35ac5acd-6660-426f-a576-466c708788a9" />
-
-
+<img alt="Vincent LAM Google Labs Profile Activity" src="./Google Labs/Vincent LAM Google Labs Profile Activity.png" />
 
 ---
 
