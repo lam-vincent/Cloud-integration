@@ -3,6 +3,7 @@ kind: BackendConfig
 metadata:
   name: api-backend-config
 spec:
+  timeoutSec: 3600
   healthCheck:
     checkIntervalSec: 15
     port: 3001
