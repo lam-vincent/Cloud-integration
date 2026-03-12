@@ -4,6 +4,7 @@ metadata:
   name: poll-ingress
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: gce
 spec:
   ingressClassName: gce
   tls:
