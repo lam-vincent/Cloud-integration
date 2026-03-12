@@ -23,13 +23,10 @@ export default function PollRoom() {
   }, [id]);
 
   useEffect(() => {
-    const fetchVotes = () => {
-      if (document.visibilityState === 'hidden') return;
-      api.getVotes(id).then(setVotes).catch(console.error);
-    };
-    fetchVotes();
-    const interval = setInterval(fetchVotes, 5000);
-    return () => clearInterval(interval);
+    const source = new EventSource(`/api/polls/${id}/votes/stream`);
+    source.onmessage = (e) => setVotes(JSON.parse(e.data));
+    source.onerror = () => source.close();
+    return () => source.close();
   }, [id]);
 
   const handleVote = async (value) => {

@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: poll-service-container
-        image: REDACTED_REGISTRY_HOST/REDACTED_GCP_PROJECT_ID/poker-repo/poll-service:latest
+        # To deploy: replace placeholders with your registry. See README for setup instructions.
+        image: <YOUR_REGISTRY_HOST>/<YOUR_GCP_PROJECT_ID>/poker-repo/poll-service:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 3001

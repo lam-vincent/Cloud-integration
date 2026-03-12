@@ -9,10 +9,10 @@ spec:
   ingressClassName: gce
   tls:
   - hosts:
-    - REDACTED_DOMAIN
+    - <YOUR_DOMAIN>
     secretName: poker-tls
   rules:
-  - host: REDACTED_DOMAIN
+  - host: <YOUR_DOMAIN>
     http:
       paths:
       - path: /api/polls

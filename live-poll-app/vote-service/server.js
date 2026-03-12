@@ -55,6 +55,7 @@ app.post('/api/vote', async (req, res) => {
        ON CONFLICT (poll_id, username) DO UPDATE SET selected_option = EXCLUDED.selected_option, voted_at = NOW()`,
       [pollId, option, username]
     );
+    await pool.query(`NOTIFY votes_updated, '${pollId}'`);
     console.log(`Vote enregistré en BDD pour le sondage ${pollId} par ${username}`);
     res.status(201).send({ message: 'Vote enregistré avec succès !' });
 
