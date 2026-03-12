@@ -14,6 +14,31 @@ const pool = new Pool({
   port: process.env.PGPORT,
 });
 
+async function initDB() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS polls (
+      id SERIAL PRIMARY KEY,
+      question TEXT NOT NULL,
+      options TEXT[] NOT NULL
+    )
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS votes (
+      id SERIAL PRIMARY KEY,
+      poll_id INTEGER REFERENCES polls(id),
+      selected_option TEXT NOT NULL,
+      username TEXT NOT NULL,
+      voted_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+  console.log('DB schema initialized');
+}
+
+initDB().catch(err => {
+  console.error('DB init failed:', err);
+  process.exit(1);
+});
+
 // Endpoint pour lister tous les sondages
 app.get('/api/polls', async (req, res) => {
   try {
