@@ -459,7 +459,11 @@ docker push REGION-docker.pkg.dev/PROJECT_ID/REPO/vote-service:latest
 
 ## 11. Google Labs
 
-Reminder: to do
+If the links fail to work, the screenshots can also be found in the docs/ folder.
+
+<img width="1704" height="1351" alt="Vincent LAM Google Labs Profile Activity" src="https://github.com/user-attachments/assets/35ac5acd-6660-426f-a576-466c708788a9" />
+
+
 
 ---
 
