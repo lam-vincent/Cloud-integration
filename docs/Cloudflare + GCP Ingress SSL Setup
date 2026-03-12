@@ -1,0 +1,198 @@
+================================================================================
+DOCUMENTATION: Cloudflare + GCP Ingress SSL — Secure Setup Guide
+================================================================================
+Date: 2026-03-12
+Domain: poker.vincentlam.xyz
+Stack: User → Cloudflare (Proxy) → GCP Global LB (GKE Ingress) → Pods
+
+--------------------------------------------------------------------------------
+ARCHITECTURE
+--------------------------------------------------------------------------------
+
+  User
+   │  HTTPS
+   ▼
+Cloudflare (Orange Cloud — Proxy ON)
+   │  HTTPS (Full Strict — validates GCP cert)
+   ▼
+GCP Global External Load Balancer
+  IP: 35.244.226.243
+  Ingress: poll-ingress (namespace: default)
+  TLS cert: cert-manager + Let's Encrypt (secret: poker-tls)
+   │
+   ├── /api/polls  → poll-service:80  → pods on port 3001
+   ├── /api/vote   → vote-service:80  → pods on port 3001
+   └── /           → poker-planning-service:80 → pods on port 80
+
+--------------------------------------------------------------------------------
+CLOUDFLARE SETTINGS (Required)
+--------------------------------------------------------------------------------
+
+DNS Record:
+  Type:    A
+  Name:    poker.vincentlam.xyz
+  Value:   35.244.226.243
+  Proxy:   Proxied (Orange Cloud ON)  ← hides real IP, enables DDoS protection
+
+SSL/TLS Settings:
+  Mode:             Full (Strict)
+                    ← Cloudflare validates GCP's TLS cert end-to-end
+                    ← Do NOT use "Flexible" (insecure) or "Full" (no validation)
+
+Edge Certificates:
+  Always Use HTTPS: ON  ← enforces HTTP → HTTPS redirect (301)
+
+--------------------------------------------------------------------------------
+WHY FULL STRICT MODE
+--------------------------------------------------------------------------------
+
+Cloudflare has 4 SSL modes:
+
+  Off        → No encryption. Never use.
+  Flexible   → Cloudflare↔GCP is HTTP. Insecure, cert not validated.
+  Full       → Cloudflare↔GCP is HTTPS but cert not validated.
+               Vulnerable to MITM between Cloudflare and GCP.
+  Full Strict → Cloudflare↔GCP is HTTPS AND cert is validated.
+               Requires a valid cert on GCP side. Most secure. USE THIS.
+
+With cert-manager + Let's Encrypt, GCP has a valid cert → Full Strict works.
+
+--------------------------------------------------------------------------------
+WHY ORANGE CLOUD (PROXIED) MATTERS
+--------------------------------------------------------------------------------
+
+With orange cloud ON:
+  - Real GCP IP (35.244.226.243) is hidden from public
+  - DDoS protection active
+  - Cloudflare WAF active
+  - HTTP → HTTPS redirect enforced by Cloudflare
+
+With grey cloud (DNS Only):
+  - Real IP is publicly visible
+  - No DDoS protection
+  - No WAF
+  - Only use temporarily for debugging or cert provisioning issues
+
+--------------------------------------------------------------------------------
+CERT-MANAGER + LET'S ENCRYPT
+--------------------------------------------------------------------------------
+
+Certificates are managed automatically by cert-manager in the cluster.
+
+Check certificate status:
+  kubectl get certificate poker-tls
+  kubectl describe certificate poker-tls
+
+Certificate details:
+  Issuer:   letsencrypt-prod (ClusterIssuer)
+  Secret:   poker-tls
+  Valid:    90 days (auto-renewed by cert-manager before expiry)
+  Renewal:  ~30 days before expiry
+
+If cert renewal fails, check:
+  kubectl get certificaterequest,order,challenge
+
+WARNING: If Cloudflare is in Proxied mode during initial cert provisioning,
+the Let's Encrypt HTTP-01 challenge WILL FAIL. To provision a new cert:
+  1. Temporarily set Cloudflare to DNS Only (grey cloud)
+  2. Wait for cert to become Ready (kubectl get certificate)
+  3. Re-enable Proxied (orange cloud)
+
+--------------------------------------------------------------------------------
+GCP HEALTH CHECKS
+--------------------------------------------------------------------------------
+
+GCP health checkers probe pods directly (NEG mode) from these IP ranges:
+  130.211.0.0/22
+  35.191.0.0/16
+
+Required firewall rule:
+  Name:          allow-gcp-health-checks
+  Direction:     INGRESS
+  Protocol:      TCP (all ports)
+  Source ranges: 130.211.0.0/22, 35.191.0.0/16
+  Target:        (all instances)
+
+Verify it exists:
+  gcloud compute firewall-rules describe allow-gcp-health-checks \
+    --project poker-planning-489721
+
+BackendConfig health check settings:
+  API services (poll, vote):   port 3001, path /
+  Frontend (poker-planning):   port 80,   path /
+
+--------------------------------------------------------------------------------
+GKE INGRESS REQUIREMENTS
+--------------------------------------------------------------------------------
+
+The GKE ingress-gce controller requires BOTH:
+  1. spec.ingressClassName: gce              (new-style)
+  2. annotations:
+       kubernetes.io/ingress.class: gce      (legacy — required for controller
+                                              to add its finalizer and provision
+                                              GCP load balancer resources)
+
+Without the legacy annotation, the ingress-gce controller silently ignores
+the Ingress and never provisions the GCP load balancer.
+
+--------------------------------------------------------------------------------
+VERIFICATION COMMANDS
+--------------------------------------------------------------------------------
+
+Check all backends are HEALTHY:
+  kubectl get ingress poll-ingress -o jsonpath='{.metadata.annotations.ingress\.kubernetes\.io/backends}'
+
+Test SSL directly on GCP LB (bypass Cloudflare):
+  curl -sI --resolve poker.vincentlam.xyz:443:35.244.226.243 https://poker.vincentlam.xyz
+
+Test HTTP redirect via Cloudflare:
+  curl -sI http://poker.vincentlam.xyz
+  # Expected: HTTP/1.1 301 Moved Permanently → https://poker.vincentlam.xyz/
+
+Test full HTTPS via Cloudflare:
+  curl -sI https://poker.vincentlam.xyz
+  # Expected: HTTP/1.1 200 OK, Server: cloudflare
+
+Check certificate:
+  kubectl get certificate poker-tls
+  # Expected: READY = True
+
+--------------------------------------------------------------------------------
+LOGS EXPLORER QUERIES (GCP Console)
+--------------------------------------------------------------------------------
+
+Load balancer health check failures:
+  resource.type="gce_backend_service"
+  logName="projects/poker-planning-489721/logs/compute.googleapis.com%2Fhealthchecks"
+
+Load balancer HTTP errors:
+  resource.type="http_load_balancer"
+  httpRequest.status>=400
+  resource.labels.forwarding_rule_name="k8s2-fr-9ix5lvl0-default-poll-ingress-4n6dfv74"
+
+--------------------------------------------------------------------------------
+TROUBLESHOOTING QUICK REFERENCE
+--------------------------------------------------------------------------------
+
+Problem: Cloudflare Error 525 (SSL Handshake Failed)
+  Cause:  GCP load balancer has no valid TLS cert, or ingress not provisioned
+  Fix:    Check kubectl get certificate, check kubectl describe ingress for IP
+
+Problem: GCP backends UNHEALTHY
+  Cause:  Health check hitting wrong port, or BackendConfig not applied
+  Fix:    Check BackendConfig port matches container port (3001 for API)
+          Verify kubectl get backendconfig
+
+Problem: Ingress has no IP after creation/recreation
+  Cause:  Missing kubernetes.io/ingress.class: gce annotation
+  Fix:    kubectl annotate ingress poll-ingress kubernetes.io/ingress.class=gce
+
+Problem: Let's Encrypt cert not provisioning
+  Cause:  Cloudflare Proxy intercepts HTTP-01 challenge
+  Fix:    Temporarily set Cloudflare to DNS Only, wait for cert, re-enable proxy
+
+Problem: New image not deployed after push
+  Cause:  imagePullPolicy: IfNotPresent caches old image on node
+  Fix:    Use imagePullPolicy: Always + kubectl rollout restart
+
+================================================================================
