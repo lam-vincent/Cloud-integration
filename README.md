@@ -22,19 +22,15 @@ https://github.com/user-attachments/assets/8ab766f9-3cac-4c6f-9865-497cc2cef383
 ## Architecture
 
 More details in docs/report.md
-```
-Browser
-  │
-  ├── GET /                  → poker-planning (React SPA)
-  ├── GET /api/polls/…       → poll-service (Node.js)
-  │     └── /votes/stream    → SSE stream (real-time votes)
-  └── POST /api/vote         → vote-service (Node.js)
-                                    │
-                              PostgreSQL NOTIFY
-                                    │
-                             poll-service LISTEN
-                                    │
-                             push to SSE clients
+```mermaid
+graph TD
+    Browser --> Ingress[GCE Ingress / TLS]
+    Ingress -->|GET /| frontend[poker-planning<br/>React SPA]
+    Ingress -->|GET /api/polls/...| poll[poll-service<br/>Node.js]
+    Ingress -->|POST /api/vote| vote[vote-service<br/>Node.js]
+    vote -->|NOTIFY votes_updated| DB[(PostgreSQL)]
+    DB -->|LISTEN| poll
+    poll -->|SSE push /votes/stream| Browser
 ```
 
 ### Services

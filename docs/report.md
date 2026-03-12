@@ -29,45 +29,35 @@ L'application est structurée en microservices et déployée sur Kubernetes, d'a
 
 ### Vue d'ensemble
 
-```
-                        ┌─────────────────────────────────────────────┐
-                        │              GCE Ingress (TLS)               │
-                        │         cert-manager / Let's Encrypt         │
-                        └──────┬────────────────┬───────────────┬──────┘
-                               │                │               │
-                    /api/polls │    /api/vote   │             / │
-                               ▼                ▼               ▼
-                    ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-                    │ poll-service │  │ vote-service │  │poker-planning│
-                    │  (Node.js)   │  │  (Node.js)   │  │   (React)    │
-                    │  port 3001   │  │  port 3001   │  │  port 3000   │
-                    └──────┬───────┘  └──────┬───────┘  └──────────────┘
-                           │                 │
-                           │   validation    │
-                           │◄────────────────┘
-                           │
-                           ▼
-                    ┌──────────────┐
-                    │  PostgreSQL  │
-                    │ (StatefulSet)│
-                    │  port 5432   │
-                    └──────────────┘
+```mermaid
+graph TD
+    Browser --> Ingress[GCE Ingress<br/>TLS / cert-manager]
+    Ingress -->|/api/polls| poll[poll-service<br/>Node.js :3001]
+    Ingress -->|/api/vote| vote[vote-service<br/>Node.js :3001]
+    Ingress -->|/| frontend[poker-planning<br/>React :3000]
+    poll --> DB[(PostgreSQL<br/>StatefulSet :5432)]
+    vote -->|validation GET /api/polls/:id| poll
+    vote --> DB
 ```
 
 ### Communication inter-services
 
 Le `vote-service` appelle `poll-service` via le DNS interne Kubernetes (`http://poll-service/api/polls/:id`) pour valider qu'un sondage existe et que l'option choisie est valide avant d'enregistrer le vote.
 
-```
-Browser ──POST /api/vote──► vote-service
-                                │
-                    GET /api/polls/:id
-                                │
-                                ▼
-                           poll-service ──► PostgreSQL (polls)
-                                │
-                                ▼
-                       PostgreSQL (votes)
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant vote-service
+    participant poll-service
+    participant PostgreSQL
+
+    Browser->>vote-service: POST /api/vote
+    vote-service->>poll-service: GET /api/polls/:id
+    poll-service->>PostgreSQL: SELECT polls
+    PostgreSQL-->>poll-service: poll data
+    poll-service-->>vote-service: poll valid
+    vote-service->>PostgreSQL: UPSERT votes
+    vote-service-->>Browser: 201 Vote enregistré
 ```
 
 ---
