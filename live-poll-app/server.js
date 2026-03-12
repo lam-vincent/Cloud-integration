@@ -1,17 +1,48 @@
 const express = require('express');
-const { Pool } = require('pg');
+const { Pool, Client } = require('pg');
 const app = express();
 const port = 3001;
 
 app.use(express.json());
 
-// Configuration de la connexion à la base de données
-const pool = new Pool({
+const pgConfig = {
   user: process.env.PGUSER,
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
   password: process.env.PGPASSWORD,
   port: process.env.PGPORT,
+};
+
+// Configuration de la connexion à la base de données
+const pool = new Pool(pgConfig);
+
+// In-memory map: pollId -> Set of SSE res objects
+const sseClients = new Map();
+
+// Dedicated client for LISTEN
+const listenClient = new Client(pgConfig);
+listenClient.connect().then(() => {
+  return listenClient.query('LISTEN votes_updated');
+}).then(() => {
+  console.log('Listening for votes_updated notifications');
+}).catch(err => console.error('LISTEN setup failed:', err));
+
+listenClient.on('notification', async (msg) => {
+  const pollId = msg.payload;
+  const clients = sseClients.get(pollId);
+  if (!clients?.size) return;
+  try {
+    const result = await pool.query(
+      'SELECT username, selected_option, voted_at FROM votes WHERE poll_id = $1 ORDER BY voted_at ASC',
+      [pollId]
+    );
+    const data = JSON.stringify(result.rows);
+    for (const res of clients) {
+      res.write(`data: ${data}\n\n`);
+    }
+  } catch (err) {
+    console.error('Failed to fetch votes for notification:', err);
+  }
 });
 
 async function initDB() {
@@ -95,6 +126,34 @@ app.get('/api/polls/:id/votes', async (req, res) => {
     console.error(err);
     res.status(500).send('Erreur serveur');
   }
+});
+
+// SSE endpoint - streams live vote updates
+app.get('/api/polls/:id/votes/stream', async (req, res) => {
+  const pollId = req.params.id;
+  res.set({
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+  });
+  res.flushHeaders();
+
+  try {
+    const result = await pool.query(
+      'SELECT username, selected_option, voted_at FROM votes WHERE poll_id = $1 ORDER BY voted_at ASC',
+      [pollId]
+    );
+    res.write(`data: ${JSON.stringify(result.rows)}\n\n`);
+  } catch (err) {
+    console.error('Failed to fetch initial votes for SSE:', err);
+  }
+
+  if (!sseClients.has(pollId)) sseClients.set(pollId, new Set());
+  sseClients.get(pollId).add(res);
+
+  req.on('close', () => {
+    sseClients.get(pollId)?.delete(res);
+  });
 });
 
 app.get('/', (req, res) => {
