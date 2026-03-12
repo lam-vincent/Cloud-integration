@@ -4,11 +4,23 @@ A collaborative planning poker web application for agile teams, deployed on GKE 
 
 ## Demo
 
-reminder:
-put two videos manually in github later, one for ticket/poll creation and the other for the voting room.
+
+
+https://github.com/user-attachments/assets/405c8fc1-0981-4552-b02b-6242170320b7
+
+
+
+https://github.com/user-attachments/assets/638f7d58-dedb-4421-bb9d-1ea22b3f4708
+
+
+
+https://github.com/user-attachments/assets/8ab766f9-3cac-4c6f-9865-497cc2cef383
+
+
 
 ## Architecture
 
+More details in docs/report.md
 ```
 Browser
   │
