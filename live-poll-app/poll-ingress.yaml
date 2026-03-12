@@ -4,7 +4,7 @@ metadata:
   name: poll-ingress
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    cloud.google.com/backend-config: '{"default": "poker-backend-config"}'
+    kubernetes.io/ingress.class: gce
 spec:
   ingressClassName: gce
   tls:
