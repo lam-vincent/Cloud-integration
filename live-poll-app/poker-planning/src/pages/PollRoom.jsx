@@ -24,14 +24,16 @@ export default function PollRoom() {
 
   useEffect(() => {
     const fetchVotes = () => {
+      if (document.visibilityState === 'hidden') return;
       api.getVotes(id).then(setVotes).catch(console.error);
     };
     fetchVotes();
-    const interval = setInterval(fetchVotes, 2000);
+    const interval = setInterval(fetchVotes, 5000);
     return () => clearInterval(interval);
   }, [id]);
 
   const handleVote = async (value) => {
+    if (value === selectedVote || isSubmitting) return;
     setSelectedVote(value);
     setIsSubmitting(true);
     try {
