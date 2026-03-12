@@ -16,6 +16,23 @@ const pool = new Pool({
 
 const POLL_SERVICE_URL = 'http://poll-service/api/polls';
 
+async function initDB() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS votes (
+      id SERIAL PRIMARY KEY,
+      poll_id INTEGER,
+      selected_option TEXT NOT NULL,
+      username TEXT NOT NULL,
+      voted_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS votes_poll_id_username_idx
+    ON votes(poll_id, username)
+  `);
+  console.log('DB schema initialized');
+}
+
 app.post('/api/vote', async (req, res) => {
   const { pollId, option, username } = req.body;
   if (!pollId || !option || !username) {
@@ -51,4 +68,9 @@ app.get('/', (req, res) => {
   res.status(200).send('ok');
 });
 
-app.listen(port, () => console.log(`🚀 Vote-service (avec DB) démarré sur le port ${port}`));
+initDB()
+  .then(() => app.listen(port, () => console.log(`🚀 Vote-service (avec DB) démarré sur le port ${port}`)))
+  .catch(err => {
+    console.error('DB init failed:', err);
+    process.exit(1);
+  });
