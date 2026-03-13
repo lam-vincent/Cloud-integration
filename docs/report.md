@@ -316,6 +316,14 @@ spec:
   <img alt="kubectl describe ingress - GKE" src="./GCP/kubectl describe ingress.png" style="width: 60%;" />
 </div>
 
+**Configurations Cloudflare** :
+
+<img alt="Cloudflare DNS" src="./cloudflare/DNS.png" style="width: 100%;" />
+<div style="display: flex; gap: 16px; align-items: flex-start; margin-top: 16px;">
+  <img alt="Cloudflare HTTPS Only" src="./cloudflare/https-only.png" style="width: 50%;" />
+  <img alt="Cloudflare SSL TLS Full Strict" src="./cloudflare/ssl tls encryption full strict.png" style="width: 50%;" />
+</div>
+
 ---
 
 ### Phase 6 (Bonus) - SSE remplaçant le polling HTTP (20/20)
