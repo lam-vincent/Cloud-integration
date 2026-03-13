@@ -514,7 +514,13 @@ docker push REGION-docker.pkg.dev/PROJECT_ID/REPO/vote-service:latest
 
 If the links fail to work, the screenshots can also be found in the docs/ folder.
 
+**Vincent LAM**
+
 <img alt="Vincent LAM Google Labs Profile Activity" src="./Google Labs/Vincent LAM Google Labs Profile Activity.png" />
+
+**Mélissa LACHEB**
+
+<img alt="Mélissa LACHEB Google Labs Profile Activity" src="./Google Labs/Melissa LACHEB Google Labs Profile Activity.png" />
 
 ---
 
