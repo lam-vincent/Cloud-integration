@@ -15,6 +15,15 @@ script:
       mermaid.init(undefined, document.querySelectorAll('.mermaid'));
 ---
 
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 2px solid #1a73e8;">
+  <img alt="Logo EFREI Paris Panthéon-Assas Université" src="./assignment and course resources/Logo_Efrei_2022.svg.png" style="width: 220px;" />
+  <div style="text-align: right; font-family: sans-serif;">
+    <div style="font-size: 1.1em; font-weight: 600; color: #1a1a1a;">Vincent Lam</div>
+    <div style="font-size: 1.1em; font-weight: 600; color: #1a1a1a;">Mélissa Lacheb</div>
+    <div style="font-size: 0.85em; color: #555; margin-top: 6px;">Intégration Cloud - 2025/2026</div>
+  </div>
+</div>
+
 # Rapport de Projet - Intégration Cloud
 
 **Application déployée** : https://poker.vincentlam.xyz/
@@ -22,6 +31,12 @@ script:
 **README** : https://github.com/lam-vincent/Cloud-integration#readme
 
 **Dépôt GitHub** : https://github.com/lam-vincent/Cloud-integration
+
+**Rapport dans le lecteur de github** : https://github.com/lam-vincent/Cloud-integration/blob/main/docs/report.md
+
+---
+
+> **Note de sécurité** : De nombreuses informations sensibles ont été volontairement omises ou remplacées dans ce rapport et dans le dépôt - identifiants Docker Hub, mots de passe, tokens d'API (Cloudflare, Google Cloud), adresses IP des services internes, noms de clusters, secrets Kubernetes, et chaînes de connexion à la base de données. L'application est exposée derrière un proxy Cloudflare qui masque l'infrastructure réelle. Tout ce à quoi j'étais capable de penser en termes de sécurité a été mis en place : secrets Kubernetes pour les credentials, TLS via cert-manager et Let's Encrypt, isolation réseau des services et politique d'accès minimale sur GCP.
 
 ---
 
@@ -294,6 +309,13 @@ spec:
       secretName: poker-tls
 ```
 
+**Vérification** :
+
+<div style="display: flex; gap: 16px; align-items: flex-start;">
+  <img alt="kubectl get pods - GKE" src="./GCP/kubectl get pods.png" style="width: 40%;" />
+  <img alt="kubectl describe ingress - GKE" src="./GCP/kubectl describe ingress.png" style="width: 60%;" />
+</div>
+
 ---
 
 ### Phase 6 (Bonus) - SSE remplaçant le polling HTTP (20/20)
@@ -306,7 +328,7 @@ spec:
 - Utilisation de PostgreSQL LISTEN/NOTIFY pour pousser les mises à jour depuis la base de données
 - Remplacement du `setInterval` côté React par un `EventSource`
 
-**Démonstration** : voir section [Démonstrations](#démonstrations) — `docs/replace-http-polling-with-server-sent-events-sse-postgresql-listen-notify.mp4`
+**Démonstration** : voir section [Démonstrations](#démonstrations) - `docs/replace-http-polling-with-server-sent-events-sse-postgresql-listen-notify.mp4`
 
 ---
 
