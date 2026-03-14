@@ -78,6 +78,7 @@ jobs:
           YOUR_REGISTRY_HOST: ${{ env.REGISTRY_HOST }}
           YOUR_GCP_PROJECT_ID: ${{ env.PROJECT_ID }}
           YOUR_DOMAIN: poker.vincentlam.xyz
+          SHA: ${{ env.SHA }}
         run: |
           cd live-poll-app
           for f in postgres-pvc.yaml postgres-deployment.yaml backend-config.yaml \
