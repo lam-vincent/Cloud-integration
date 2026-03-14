@@ -77,9 +77,10 @@ jobs:
         env:
           YOUR_REGISTRY_HOST: ${{ env.REGISTRY_HOST }}
           YOUR_GCP_PROJECT_ID: ${{ env.PROJECT_ID }}
+          YOUR_DOMAIN: poker.vincentlam.xyz
         run: |
           cd live-poll-app
-          for f in postgres-deployment.yaml backend-config.yaml \
+          for f in postgres-pvc.yaml postgres-deployment.yaml backend-config.yaml \
                    poll-service.yaml vote-service.yaml \
                    poker-planning-deployment.yaml \
                    poll-deployment.yaml vote-deployment.yaml \
