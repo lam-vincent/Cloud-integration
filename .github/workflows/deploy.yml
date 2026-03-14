@@ -90,6 +90,6 @@ jobs:
 
       - name: Wait for rollouts
         run: |
-          kubectl rollout status deployment/poll-deployment
-          kubectl rollout status deployment/vote-deployment
+          kubectl rollout status deployment/poll-service-deployment
+          kubectl rollout status deployment/vote-service-deployment
           kubectl rollout status deployment/poker-planning
