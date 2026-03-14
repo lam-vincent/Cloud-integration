@@ -1,0 +1,94 @@
+# .github/workflows/deploy.yml
+name: Build & Deploy to GKE
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGISTRY_HOST: ${{ secrets.REGISTRY_HOST }}
+  REPO: poker-repo
+  CLUSTER: ${{ secrets.GKE_CLUSTER }}
+  ZONE: ${{ secrets.GKE_ZONE }}
+  SHA: ${{ github.sha }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write   # required for WIF
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGISTRY_HOST }} --quiet
+
+      - name: Build & push poll-service
+        run: |
+          IMAGE=$REGISTRY_HOST/$PROJECT_ID/$REPO/poll-service
+          docker build -t $IMAGE:latest -t $IMAGE:$SHA live-poll-app/
+          docker push $IMAGE:latest
+          docker push $IMAGE:$SHA
+
+      - name: Build & push vote-service
+        run: |
+          IMAGE=$REGISTRY_HOST/$PROJECT_ID/$REPO/vote-service
+          docker build -t $IMAGE:latest -t $IMAGE:$SHA live-poll-app/vote-service/
+          docker push $IMAGE:latest
+          docker push $IMAGE:$SHA
+
+      - name: Build & push poker-planning
+        run: |
+          IMAGE=$REGISTRY_HOST/$PROJECT_ID/$REPO/poker-planning
+          docker build -t $IMAGE:latest -t $IMAGE:$SHA live-poll-app/poker-planning/
+          docker push $IMAGE:latest
+          docker push $IMAGE:$SHA
+
+      - uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.CLUSTER }}
+          location: ${{ env.ZONE }}
+
+      - name: Apply Kubernetes secrets (idempotent)
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          kubectl create secret generic postgres-secret \
+            --from-literal=POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+            --dry-run=client -o yaml | kubectl apply -f -
+          kubectl create secret generic cloudflare-api-token \
+            --from-literal=api-token=$CLOUDFLARE_API_TOKEN \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy manifests
+        env:
+          YOUR_REGISTRY_HOST: ${{ env.REGISTRY_HOST }}
+          YOUR_GCP_PROJECT_ID: ${{ env.PROJECT_ID }}
+        run: |
+          cd live-poll-app
+          for f in postgres-deployment.yaml backend-config.yaml \
+                   poll-service.yaml vote-service.yaml \
+                   poker-planning-deployment.yaml \
+                   poll-deployment.yaml vote-deployment.yaml \
+                   clusterissuer.yaml poll-ingress.yaml; do
+            envsubst < $f | kubectl apply -f -
+          done
+
+      - name: Wait for rollouts
+        run: |
+          kubectl rollout status deployment/poll-deployment
+          kubectl rollout status deployment/vote-deployment
+          kubectl rollout status deployment/poker-planning
