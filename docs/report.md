@@ -1,28 +1,6 @@
----
-pdf_options:
-  format: A4
-  margin: 30mm 20mm
-script:
-  - url: https://unpkg.com/mermaid@9/dist/mermaid.min.js
-  - content: |
-      document.querySelectorAll('code.language-mermaid').forEach(el => {
-        const div = document.createElement('div');
-        div.className = 'mermaid';
-        div.textContent = el.textContent;
-        el.parentNode.replaceWith(div);
-      });
-      mermaid.initialize({ startOnLoad: false, securityLevel: 'loose' });
-      mermaid.init(undefined, document.querySelectorAll('.mermaid'));
----
+<img alt="Logo EFREI Paris Panthéon-Assas Université" src="./resources/Logo_Efrei_2022.svg.png" width="180" />
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 2px solid #1a73e8;">
-  <img alt="Logo EFREI Paris Panthéon-Assas Université" src="./assignment and course resources/Logo_Efrei_2022.svg.png" style="width: 220px;" />
-  <div style="text-align: right; font-family: sans-serif;">
-    <div style="font-size: 1.1em; font-weight: 600; color: #1a1a1a;">Vincent Lam</div>
-    <div style="font-size: 1.1em; font-weight: 600; color: #1a1a1a;">Mélissa Lacheb</div>
-    <div style="font-size: 0.85em; color: #555; margin-top: 6px;">Intégration Cloud - 2025/2026</div>
-  </div>
-</div>
+**Vincent Lam — Mélissa Lacheb** | Intégration Cloud - 2025/2026
 
 # Rapport de Projet - Intégration Cloud
 
@@ -37,6 +15,31 @@ script:
 ---
 
 > **Note de sécurité** : De nombreuses informations sensibles ont été volontairement omises ou remplacées dans ce rapport et dans le dépôt - identifiants Docker Hub, mots de passe, tokens d'API (Cloudflare, Google Cloud), adresses IP des services internes, noms de clusters, secrets Kubernetes, et chaînes de connexion à la base de données. L'application est exposée derrière un proxy Cloudflare qui masque l'infrastructure réelle. Tout ce à quoi j'étais capable de penser en termes de sécurité a été mis en place : secrets Kubernetes pour les credentials, TLS via cert-manager et Let's Encrypt, isolation réseau des services et politique d'accès minimale sur GCP.
+
+---
+
+## Table des matières
+
+1. [Introduction](#1-introduction)
+2. [Démonstrations](#démonstrations)
+3. [Architecture](#2-architecture)
+4. [Stack Technologique](#3-stack-technologique)
+5. [Progression par Phase](#4-progression-par-phase)
+   - [Phase 1 - Service unique (Minikube)](#phase-1---service-unique-déployé-localement-avec-minikube-1020)
+   - [Phase 2 - Ingress](#phase-2---api-gateway--ingress-1220)
+   - [Phase 3 - Second service](#phase-3---second-service--communication-inter-services-1420)
+   - [Phase 4 - Base de données](#phase-4---intégration-base-de-données-1620)
+   - [Phase 5 - Mise en production sur GKE (TLS, DNS, Cloudflare)](#phase-5---mise-en-production-sur-gke-tls-dns-cloudflare-1820)
+   - [Phase 6 (Bonus) - CI/CD GitHub Actions](#phase-6-bonus---pipeline-cicd-github-actions-2020)
+   - [Phase 7 (Bonus) - SSE remplaçant le polling HTTP](#phase-7-bonus---sse-remplaçant-le-polling-http-2020)
+6. [Référence API](#5-référence-api)
+7. [Schéma de Base de Données](#6-schéma-de-base-de-données)
+8. [Manifests Kubernetes](#7-manifests-kubernetes)
+9. [Dockerfiles](#8-dockerfiles)
+10. [Configuration GCP / Cloudflare](#9-configuration-gcp--cloudflare)
+11. [Problèmes rencontrés et Dépannage](#10-problèmes-rencontrés-et-dépannage)
+12. [Google Labs](#11-google-labs)
+13. [Conclusion](#12-conclusion)
 
 ---
 
@@ -63,13 +66,13 @@ L'application est structurée en microservices et déployée sur Kubernetes, d'a
 
 ## Démonstrations
 
-Les vidéos de démonstration sont disponibles dans le dossier `docs/` du dépôt, et également accessibles directement depuis le [README.md](../README.md#demo) (lecteur intégré).
+Les vidéos de démonstration sont disponibles dans le dossier `docs/` du dépôt, et également accessibles directement depuis le [README.md](https://github.com/lam-vincent/Cloud-integration#Demo) (lecteur intégré).
 
 | Vidéo                                                                                | Description                                    |
 | ------------------------------------------------------------------------------------ | ---------------------------------------------- |
 | `docs/create-new-session.mp4`                                                        | Création d'une session de planning poker       |
 | `docs/change-name.mp4`                                                               | Changement de nom d'un participant             |
-| `docs/replace-http-polling-with-server-sent-events-sse-postgresql-listen-notify.mp4` | Remplacement du polling HTTP par SSE (Phase 6) |
+| `docs/replace-http-polling-with-server-sent-events-sse-postgresql-listen-notify.mp4` | Remplacement du polling HTTP par SSE (Phase 7) |
 
 ---
 
@@ -127,6 +130,7 @@ sequenceDiagram
 | **Cloudflare**             | DNS + proxy CDN                               | `docs/Cloudflare + GCP Ingress SSL Setup/`                          |
 | **axios**                  | Appels HTTP entre services                    | `live-poll-app/vote-service/server.js`                              |
 | **concurrently / nodemon** | Dev tooling                                   | `live-poll-app/package.json`                                        |
+| **GitHub Actions**         | CI/CD pipeline (build, push, deploy sur GKE)  | `.github/workflows/deploy.yml`                                      |
 
 ---
 
@@ -275,7 +279,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS votes_poll_id_username_idx
 
 ---
 
-### Phase 5 - Déploiement cloud + TLS (18/20)
+### Phase 5 - Mise en production sur GKE (TLS, DNS, Cloudflare) (18/20)
 
 **Objectif** : Déployer sur GKE avec un domaine personnalisé et HTTPS.
 
@@ -311,22 +315,54 @@ spec:
 
 **Vérification** :
 
-<div style="display: flex; gap: 16px; align-items: flex-start;">
-  <img alt="kubectl get pods - GKE" src="./GCP/kubectl get pods.png" style="width: 40%;" />
-  <img alt="kubectl describe ingress - GKE" src="./GCP/kubectl describe ingress.png" style="width: 60%;" />
-</div>
+<img alt="kubectl get pods - GKE" src="./GCP/kubectl get pods.png" width="45%" /> <img alt="kubectl describe ingress - GKE" src="./GCP/kubectl describe ingress.png" width="52%" />
 
 **Configurations Cloudflare** :
 
-<img alt="Cloudflare DNS" src="./cloudflare/DNS.png" style="width: 100%;" />
-<div style="display: flex; gap: 16px; align-items: flex-start; margin-top: 16px;">
-  <img alt="Cloudflare HTTPS Only" src="./cloudflare/https-only.png" style="width: 50%;" />
-  <img alt="Cloudflare SSL TLS Full Strict" src="./cloudflare/ssl tls encryption full strict.png" style="width: 50%;" />
-</div>
+<img alt="Cloudflare DNS" src="./cloudflare/DNS.png" width="100%" />
+
+<img alt="Cloudflare HTTPS Only" src="./cloudflare/https-only.png" width="48%" /> <img alt="Cloudflare SSL TLS Full Strict" src="./cloudflare/ssl tls encryption full strict.png" width="48%" />
 
 ---
 
-### Phase 6 (Bonus) - SSE remplaçant le polling HTTP (20/20)
+### Phase 6 (Bonus) - Pipeline CI/CD GitHub Actions (20/20)
+
+**Objectif** : Automatiser le build, le push des images et le déploiement sur GKE à chaque push sur `main`.
+
+**Ce qui a été fait** :
+
+- Création de `.github/workflows/deploy.yml`
+- Authentification GCP via Workload Identity Federation (sans clé de service)
+- Build et push des 3 images vers Artifact Registry avec deux tags : `:latest` et `:<sha>`
+- Application des manifests Kubernetes via `envsubst` + `kubectl apply`
+- Attente du rollout avec `kubectl rollout status`
+
+**Pipeline** :
+
+```mermaid
+graph LR
+    A[push main] --> B[Build and push poll-service]
+    A --> C[Build and push vote-service]
+    A --> D[Build and push poker-planning]
+    B --> E[kubectl apply manifests]
+    C --> E
+    D --> E
+    E --> F[kubectl rollout status]
+    F --> G[Deployed]
+```
+
+**Variables d'environnement injectées via `envsubst`** :
+
+| Variable              | Valeur                       |
+| --------------------- | ---------------------------- |
+| `YOUR_REGISTRY_HOST`  | `REGION-docker.pkg.dev`      |
+| `YOUR_GCP_PROJECT_ID` | ID du projet GCP             |
+| `YOUR_DOMAIN`         | `poker.vincentlam.xyz`       |
+| `SHA`                 | SHA du commit (`github.sha`) |
+
+---
+
+### Phase 7 (Bonus) - SSE remplaçant le polling HTTP (20/20)
 
 **Objectif** : Remplacer le polling HTTP côté client par des Server-Sent Events (SSE) pour la mise à jour en temps réel des résultats.
 
@@ -420,9 +456,9 @@ spec:
 | `poker-planning-deployment.yaml` | Deployment + Service  | Frontend React (poker planning)                                    |
 | `postgres-pvc.yaml`              | _(obsolète)_          | Remplacé par volumeClaimTemplates dans le StatefulSet              |
 
-### Note sur `imagePullPolicy: Always`
+### Note sur les tags d'image et `imagePullPolicy`
 
-Sur GKE, l'utilisation du tag `:latest` nécessite `imagePullPolicy: Always` pour forcer le rechargement de l'image à chaque déploiement. Sans cette option, Kubernetes utilise l'image en cache et les mises à jour ne sont pas appliquées.
+Les images sont taguées avec le SHA du commit (`:<sha>`) via la variable `$SHA` injectée par `envsubst`. Cela garantit que chaque déploiement modifie la spec du Deployment, forçant Kubernetes à redémarrer les pods avec la nouvelle image. `imagePullPolicy: Always` est conservé en complément.
 
 ---
 
@@ -472,6 +508,16 @@ docker push REGION-docker.pkg.dev/PROJECT_ID/REPO/vote-service:latest
    ```
 6. Appliquer le ClusterIssuer et les manifests
 
+### Monitoring du trafic (Cloudflare Analytics)
+
+Cloudflare fournit des métriques de trafic en temps réel sans instrumentation supplémentaire.
+
+| **24 heures** | **7 jours** |
+|---|---|
+| ![24h](./cloudflare/Cloudflare%20monitor%20web%20traffic%2024%20hours%20rolling.png) | ![7j](./cloudflare/Cloudflare%20monitor%20web%20traffic%207%20days%20rolling.png) |
+
+---
+
 ### Étapes Cloudflare
 
 1. Ajouter le domaine dans Cloudflare
@@ -504,9 +550,17 @@ docker push REGION-docker.pkg.dev/PROJECT_ID/REPO/vote-service:latest
 
 **Symptôme** : Après un `docker push` et `kubectl rollout restart`, les pods continuent d'utiliser l'ancienne image.
 
-**Cause** : `imagePullPolicy` par défaut est `IfNotPresent` pour les tags non-latest.
+**Cause** : `imagePullPolicy` par défaut est `IfNotPresent` pour les tags non-latest. Avec `:latest` et `imagePullPolicy: Always`, Kubernetes re-pull mais ne redémarre les pods que si la spec du Deployment change — ce qui n'arrive pas si le tag reste `:latest`.
 
-**Solution** : Utiliser `imagePullPolicy: Always` dans le Deployment.
+**Solution** : Taguer les images avec le SHA du commit (`:<sha>`) et injecter `SHA` via `envsubst` dans les manifests. Chaque déploiement produit une spec différente, forçant le rollout.
+
+### Noms de deployments incorrects dans `kubectl rollout status`
+
+**Symptôme** : `Error from server (NotFound): deployments.apps "poll-deployment" not found`
+
+**Cause** : Le nom utilisé dans `kubectl rollout status deployment/<name>` ne correspondait pas au `metadata.name` dans les fichiers YAML (`poll-service-deployment` et `vote-service-deployment`).
+
+**Solution** : Aligner les noms dans le workflow avec les `metadata.name` réels des manifests.
 
 ---
 
@@ -514,13 +568,9 @@ docker push REGION-docker.pkg.dev/PROJECT_ID/REPO/vote-service:latest
 
 If the links fail to work, the screenshots can also be found in the docs/ folder.
 
-**Vincent LAM**
-
-<img alt="Vincent LAM Google Labs Profile Activity" src="./Google Labs/Vincent LAM Google Labs Profile Activity.png" />
-
-**Mélissa LACHEB**
-
-<img alt="Mélissa LACHEB Google Labs Profile Activity" src="./Google Labs/Melissa LACHEB Google Labs Profile Activity.png" />
+| **Vincent LAM** | **Mélissa LACHEB** |
+|---|---|
+| ![Vincent LAM Google Labs Profile Activity](./Google%20Labs/Vincent%20LAM%20Google%20Labs%20Profile%20Activity.png) | ![Mélissa LACHEB Google Labs Profile Activity](./Google%20Labs/Melissa%20LACHEB%20Google%20Labs%20Profile%20Activity.png) |
 
 ---
 
@@ -534,3 +584,4 @@ If the links fail to work, the screenshots can also be found in the docs/ folder
 - **TLS / cert-manager** : automatisation des certificats Let's Encrypt avec challenge DNS-01
 - **Architecture microservices** : communication inter-services, validation distribuée
 - **PostgreSQL sur K8s** : persistance avec StatefulSet et volumeClaimTemplates
+- **CI/CD** : pipeline GitHub Actions avec Workload Identity Federation, envsubst, et rollout automatisé
