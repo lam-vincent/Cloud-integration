@@ -1,38 +1,6 @@
----
-pdf_options:
-  format: A4
-  margin: 30mm 20mm
-script:
-  - url: https://unpkg.com/mermaid@9/dist/mermaid.min.js
-  - content: |
-      document.querySelectorAll('code.language-mermaid').forEach(el => {
-        const div = document.createElement('div');
-        div.className = 'mermaid';
-        div.textContent = el.textContent;
-        el.parentNode.replaceWith(div);
-      });
-      mermaid.initialize({ startOnLoad: false, securityLevel: 'loose' });
-      mermaid.init(undefined, document.querySelectorAll('.mermaid'));
----
+<img alt="Logo EFREI Paris Panthéon-Assas Université" src="./resources/Logo_Efrei_2022.svg.png" width="180" />
 
-<style>
-  h2, h3 {
-    page-break-after: avoid;
-  }
-  h2 + p, h2 + ul, h2 + table, h2 + pre, h2 + blockquote,
-  h3 + p, h3 + ul, h3 + table, h3 + pre, h3 + blockquote {
-    page-break-before: avoid;
-  }
-</style>
-
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 2px solid #1a73e8;">
-  <img alt="Logo EFREI Paris Panthéon-Assas Université" src="./resources/Logo_Efrei_2022.svg.png" style="width: 220px;" />
-  <div style="text-align: right; font-family: sans-serif;">
-    <div style="font-size: 1.1em; font-weight: 600; color: #1a1a1a;">Vincent Lam</div>
-    <div style="font-size: 1.1em; font-weight: 600; color: #1a1a1a;">Mélissa Lacheb</div>
-    <div style="font-size: 0.85em; color: #555; margin-top: 6px;">Intégration Cloud - 2025/2026</div>
-  </div>
-</div>
+**Vincent Lam — Mélissa Lacheb** | Intégration Cloud - 2025/2026
 
 # Rapport de Projet - Intégration Cloud
 
@@ -347,18 +315,13 @@ spec:
 
 **Vérification** :
 
-<div style="display: flex; gap: 16px; align-items: flex-start;">
-  <img alt="kubectl get pods - GKE" src="./GCP/kubectl get pods.png" style="width: 40%;" />
-  <img alt="kubectl describe ingress - GKE" src="./GCP/kubectl describe ingress.png" style="width: 60%;" />
-</div>
+<img alt="kubectl get pods - GKE" src="./GCP/kubectl get pods.png" width="45%" /> <img alt="kubectl describe ingress - GKE" src="./GCP/kubectl describe ingress.png" width="52%" />
 
 **Configurations Cloudflare** :
 
-<img alt="Cloudflare DNS" src="./cloudflare/DNS.png" style="width: 100%;" />
-<div style="display: flex; gap: 16px; align-items: flex-start; margin-top: 16px;">
-  <img alt="Cloudflare HTTPS Only" src="./cloudflare/https-only.png" style="width: 50%;" />
-  <img alt="Cloudflare SSL TLS Full Strict" src="./cloudflare/ssl tls encryption full strict.png" style="width: 50%;" />
-</div>
+<img alt="Cloudflare DNS" src="./cloudflare/DNS.png" width="100%" />
+
+<img alt="Cloudflare HTTPS Only" src="./cloudflare/https-only.png" width="48%" /> <img alt="Cloudflare SSL TLS Full Strict" src="./cloudflare/ssl tls encryption full strict.png" width="48%" />
 
 ---
 
@@ -549,16 +512,9 @@ docker push REGION-docker.pkg.dev/PROJECT_ID/REPO/vote-service:latest
 
 Cloudflare fournit des métriques de trafic en temps réel sans instrumentation supplémentaire.
 
-<div style="display: flex; gap: 16px; align-items: flex-start;">
-  <div style="flex: 1;">
-    <p><strong>24 heures</strong></p>
-    <img alt="Cloudflare monitor web traffic 24 hours rolling" src="./cloudflare/Cloudflare monitor web traffic 24 hours rolling.png" style="width: 100%;" />
-  </div>
-  <div style="flex: 1;">
-    <p><strong>7 jours</strong></p>
-    <img alt="Cloudflare monitor web traffic 7 days rolling" src="./cloudflare/Cloudflare monitor web traffic 7 days rolling.png" style="width: 100%;" />
-  </div>
-</div>
+| **24 heures** | **7 jours** |
+|---|---|
+| ![24h](./cloudflare/Cloudflare%20monitor%20web%20traffic%2024%20hours%20rolling.png) | ![7j](./cloudflare/Cloudflare%20monitor%20web%20traffic%207%20days%20rolling.png) |
 
 ---
 
@@ -612,16 +568,9 @@ Cloudflare fournit des métriques de trafic en temps réel sans instrumentation 
 
 If the links fail to work, the screenshots can also be found in the docs/ folder.
 
-<div style="display: flex; gap: 16px; align-items: flex-start; page-break-inside: avoid;">
-  <div style="flex: 1;">
-    <p><strong>Vincent LAM</strong></p>
-    <img alt="Vincent LAM Google Labs Profile Activity" src="./Google Labs/Vincent LAM Google Labs Profile Activity.png" style="width: 100%;" />
-  </div>
-  <div style="flex: 1;">
-    <p><strong>Mélissa LACHEB</strong></p>
-    <img alt="Mélissa LACHEB Google Labs Profile Activity" src="./Google Labs/Melissa LACHEB Google Labs Profile Activity.png" style="width: 100%;" />
-  </div>
-</div>
+| **Vincent LAM** | **Mélissa LACHEB** |
+|---|---|
+| ![Vincent LAM Google Labs Profile Activity](./Google%20Labs/Vincent%20LAM%20Google%20Labs%20Profile%20Activity.png) | ![Mélissa LACHEB Google Labs Profile Activity](./Google%20Labs/Melissa%20LACHEB%20Google%20Labs%20Profile%20Activity.png) |
 
 ---
 
